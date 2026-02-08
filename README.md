@@ -178,15 +178,71 @@ Documentation focused on quality leadership and strategy.
 
 ---
 
+## 🧪 Week 3 – API Automation with Playwright (Python)
+In this week, I designed and implemented a Playwright-based API automation framework to validate an authenticated backend system. The goal was to demonstrate real-world SDET practices such as secure API testing, full CRUD coverage, negative testing, and clean test design.
 
+🔹 Scope & Objectives
+
+Validate REST APIs behind authentication
+
+Cover full CRUD lifecycle for a core business resource
+
+Ensure APIs fail safely and predictably under invalid conditions
+
+Build tests that are order-independent, reusable, and CI-ready
+
+🔹 Technology & Tools
+
+Playwright (Python) – APIRequestContext for HTTP testing
+
+Pytest – test runner and fixture management
+
+FastAPI mock enterprise app – system under test (auth + CRUD)
+
+Bearer token authentication
+
+🔹 Test Coverage
+
+✅ Authentication handling via reusable fixtures
+
+✅ Create, Read, Update, Delete (CRUD) API tests
+
+✅ Unauthorized access validation (401)
+
+✅ Input validation errors (422)
+
+✅ Non-existent resource handling (404)
+
+✅ Proper HTTP status code assertions
+
+🔹 Test Design Highlights
+
+Session-scoped fixtures for API context and authentication
+
+Function-scoped fixtures for test data creation and cleanup
+
+Centralized setup and teardown to keep tests isolated
+
+No test-order dependencies (safe for CI and parallel execution)
+
+🔹 How to Run API Tests
+
+```bash
+python -m pytest playwright-python-api-framework/tests -v
+
+```
+
+⚠️ Note: The FastAPI mock backend must be running locally on http://localhost:8080.
+
+🔹 Why Playwright for API Testing?
+
+Using Playwright for both API and UI testing allows a single unified toolchain, shared configuration, and consistent CI execution. This mirrors how modern SDET teams reduce tooling fragmentation in real-world environments.
 ## 🤝 Contributing
 
 Suggestions and improvements are welcome.
 Please open an issue or pull request with a clear description of proposed changes.
 
-
 ---
-
 
 ## 📄 License
 
