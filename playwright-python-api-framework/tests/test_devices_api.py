@@ -1,11 +1,10 @@
-import json
 import pytest
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def created_device(api_request_context, base_url, auth_header):
     """
-    Create a device once for GET / PUT / DELETE tests
+    Create a device for a single test and clean it up afterward.
     """
     payload = {
         "name": "Playwright Device",
@@ -14,11 +13,8 @@ def created_device(api_request_context, base_url, auth_header):
 
     response = api_request_context.post(
         f"{base_url}/api/devices",
-        data=json.dumps(payload),
-        headers={
-            **auth_header,
-            "Content-Type": "application/json"
-        }
+        data=payload,
+        headers=auth_header
     )
 
     assert response.status == 201
@@ -26,14 +22,68 @@ def created_device(api_request_context, base_url, auth_header):
 
     yield device
 
-    # Cleanup (best practice)
+    # Cleanup
     api_request_context.delete(
         f"{base_url}/api/devices/{device['id']}",
         headers=auth_header
     )
 
 
-def test_get_devices_empty(api_request_context, base_url, auth_header):
+def test_get_devices_unauthorized(api_request_context, base_url):
+    response = api_request_context.get(
+        f"{base_url}/api/devices"
+    )
+
+    assert response.status == 401
+
+
+def test_create_device_unauthorized(api_request_context, base_url):
+    payload = {
+        "name": "Hacker Device",
+        "status": "online"
+    }
+
+    response = api_request_context.post(
+        f"{base_url}/api/devices",
+        data=payload
+    )
+
+    assert response.status == 401
+
+
+def test_create_device_invalid_payload(api_request_context, base_url, auth_header):
+    payload = {
+        "name": "Broken Device"
+        # missing "status"
+    }
+
+    response = api_request_context.post(
+        f"{base_url}/api/devices",
+        data=payload,
+        headers=auth_header
+    )
+
+    assert response.status == 422
+
+
+def test_get_nonexistent_device(api_request_context, base_url, auth_header):
+    response = api_request_context.get(
+        f"{base_url}/api/devices/999999",
+        headers=auth_header
+    )
+
+    assert response.status == 404
+
+
+def test_delete_nonexistent_device(api_request_context, base_url, auth_header):
+    response = api_request_context.delete(
+        f"{base_url}/api/devices/999999",
+        headers=auth_header
+    )
+
+    assert response.status == 404
+
+def test_get_devices_returns_list(api_request_context, base_url, auth_header):
     response = api_request_context.get(
         f"{base_url}/api/devices",
         headers=auth_header
@@ -51,11 +101,8 @@ def test_create_device(api_request_context, base_url, auth_header):
 
     response = api_request_context.post(
         f"{base_url}/api/devices",
-        data=json.dumps(payload),
-        headers={
-            **auth_header,
-            "Content-Type": "application/json"
-        }
+        data=payload,
+        headers=auth_header
     )
 
     assert response.status == 201
@@ -86,11 +133,8 @@ def test_update_device(api_request_context, base_url, auth_header, created_devic
 
     response = api_request_context.put(
         f"{base_url}/api/devices/{device_id}",
-        data=json.dumps(payload),
-        headers={
-            **auth_header,
-            "Content-Type": "application/json"
-        }
+        data=payload,
+        headers=auth_header
     )
 
     assert response.status == 200
