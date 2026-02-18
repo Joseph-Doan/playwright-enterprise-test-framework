@@ -2,6 +2,9 @@
 
 A comprehensive SDET portfolio focused on quality engineering at scale. Demonstrates Playwright (Python) automation frameworks, API testing, CI/CD pipelines, containerized execution with Docker, Kubernetes-based test orchestration, and real-world test strategy and architecture decisions.
 
+A professional-grade SDET portfolio demonstrating API and UI automation using Python + Playwright, structured to reflect real-world enterprise test architecture.
+
+
 ![CI](https://github.com/Joseph-Doan/sdet-playwright-porfolio/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
@@ -67,13 +70,19 @@ This repository acts as a portfolio landing page and index for multiple focused 
 
 ```Repository Structure
 sdet-playwright-portfolio/
-├── playwright-python-ui-framework/
+│
 ├── playwright-python-api-framework/
-├── ci-cd-pipelines/
-├── docker-test-runner/
-├── kubernetes-test-jobs/
-├── quality-engineering-docs/
-└── README.md
+│   ├── conftest.py
+│   ├── tests/
+│   └── ...
+│
+├── playwright-python-ui-framework/
+│   ├── pages/
+│   ├── tests/
+│   ├── conftest.py
+│   └── ...
+│
+└── sut/   (System Under Test reference)
 ```
 
 
@@ -167,6 +176,70 @@ Documentation focused on quality leadership and strategy.
 
 ---
 
+## 🧪 Test Execution Guide
+
+This repository contains two independent automation frameworks:
+
+- API Automation Framework (Playwright Request API)
+
+- UI Automation Framework (Playwright Browser + POM)
+
+These test suites are intentionally executed separately to mirror real-world CI/CD pipeline stages and to prevent event loop conflicts.
+
+⚠️ Note: The FastAPI mock backend must be running locally on http://localhost:8080.
+
+### 🚀 Run API Tests
+
+```bash
+python -m pytest playwright-python-api-framework/tests -v
+
+```
+
+What this covers:
+
+- Authentication
+
+- CRUD operations
+
+- Negative scenarios
+
+- Validation errors
+
+- Authorization checks
+
+### 🖥 Run UI Tests
+
+```bash
+python -m pytest playwright-python-ui-framework/tests -v
+
+```
+
+What this covers:
+
+- Login success
+
+- Login failure
+
+- Devices page rendering
+
+- Page Object Model structure
+
+## 🧠 Why Separate Execution?
+
+In production-grade automation:
+
+- API and UI tests run in separate CI stages
+
+- API tests are fast and validate business logic
+
+- UI tests validate user workflows
+
+- Separation avoids async loop conflicts and reduces pipeline instability
+
+This architecture mirrors real enterprise automation strategy.
+
+---
+
 
 ## 🎯 How to Use This Portfolio
 
@@ -232,7 +305,7 @@ python -m pytest playwright-python-api-framework/tests -v
 
 ```
 
-⚠️ Note: The FastAPI mock backend must be running locally on http://localhost:8080.
+
 
 🔹 Why Playwright for API Testing?
 
