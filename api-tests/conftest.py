@@ -1,16 +1,12 @@
 import pytest
-from playwright.sync_api import APIRequestContext, sync_playwright
 
 @pytest.fixture(scope="session")
-def base_url():
-    return "http://localhost:8080"
-
-@pytest.fixture(scope="session")
-def api_request_context():
-    with sync_playwright() as p:
-        request_context = p.request.new_context()
-        yield request_context
-        request_context.dispose()
+def api_request_context(playwright):
+    request_context = playwright.request.new_context(
+        base_url="http://localhost:8080",
+    )
+    yield request_context
+    request_context.dispose()
 
 @pytest.fixture(scope="session")
 def auth_header(api_request_context, base_url):
@@ -27,3 +23,12 @@ def auth_header(api_request_context, base_url):
     )
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def api_client(api_request_context, base_url, auth_header):
+    return {
+        "client": api_request_context,
+        "base_url": base_url,
+        "headers": auth_header
+    }

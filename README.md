@@ -167,7 +167,7 @@ Documentation focused on quality leadership and strategy.
    ```
 2. Navigate into a project folder (e.g., playwright-python-ui-framework)
    ```bash
-   cd playwright-python-ui-framework
+   cd ui-tests
 
    ```
 
@@ -191,7 +191,7 @@ These test suites are intentionally executed separately to mirror real-world CI/
 ### 🚀 Run API Tests
 
 ```bash
-python -m pytest playwright-python-api-framework/tests -v
+python -m pytest api-tests/tests -v
 
 ```
 
@@ -210,7 +210,7 @@ What this covers:
 ### 🖥 Run UI Tests
 
 ```bash
-python -m pytest playwright-python-ui-framework/tests -v
+python -m pytest ui-tests/tests -v
 
 ```
 
@@ -301,7 +301,7 @@ No test-order dependencies (safe for CI and parallel execution)
 🔹 How to Run API Tests
 
 ```bash
-python -m pytest playwright-python-api-framework/tests -v
+python -m pytest api-tests/tests -v
 
 ```
 

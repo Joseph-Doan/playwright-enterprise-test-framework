@@ -9,3 +9,7 @@ class DevicesPage:
     @property
     def device_items(self):
         return self.page.locator("li")
+
+    def is_loaded(self):
+        return "devices" in self.page.url
+

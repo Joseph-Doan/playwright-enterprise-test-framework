@@ -11,11 +11,11 @@ class LoginPage:
 
     @property
     def username_input(self):
-        return self.page.locator("input[name='username']")
+        return self.page.locator('[name="username"]')
 
     @property
     def password_input(self):
-        return self.page.locator("input[name='password']")
+        return self.page.locator('[name="password"]')
 
     @property
     def login_button(self):
@@ -23,11 +23,11 @@ class LoginPage:
 
     @property
     def error_message(self):
-        return self.page.locator("text=Invalid credentials")
+        return self.page.get_by_text("Invalid", exact=False)
 
     # Actions
     def goto(self, base_url):
-        self.page.goto(f"{base_url}/ui/login")
+        self.page.goto(f"{base_url}")
 
     def login(self, username: str, password: str):
         self.username_input.fill(username)

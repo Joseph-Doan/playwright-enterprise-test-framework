@@ -1,5 +1,5 @@
 from playwright.sync_api import APIRequestContext
-from framework.config import BASE_URL
+from core.config import BASE_URL
 
 class APIClient:
 
