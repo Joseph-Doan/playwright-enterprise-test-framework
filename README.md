@@ -64,25 +64,32 @@ Tooling choices are driven by **stability, observability, and scalability**, not
 ---
 
 
-📁 Repository Structure
+## 📁 Repository Structure
 
 This repository acts as a portfolio landing page and index for multiple focused projects:
 
 ```Repository Structure
-sdet-playwright-portfolio/
+playwright-enterprise-test-framework/
 │
-├── playwright-python-api-framework/
-│   ├── conftest.py
-│   ├── tests/
-│   └── ...
+├── api-tests/                 # API test suite
+│   ├── services/             # Service layer (business logic)
+│   ├── tests/                # API test cases
+│   └── conftest.py           # API fixtures
 │
-├── playwright-python-ui-framework/
-│   ├── pages/
-│   ├── tests/
-│   ├── conftest.py
-│   └── ...
+├── ui-tests/                 # UI test suite
+│   ├── pages/                # Page Object Models
+│   └── tests/                # UI test cases
 │
-└── sut/   (System Under Test reference)
+├── core/                     # Shared framework components
+│   ├── api/                  # API client
+│   ├── config/               # Environment & settings
+│   ├── fixtures/             # Base fixtures
+│   └── logging/              # Logging utilities
+│
+├── infra/                    # Infrastructure (CI/CD, Docker)
+├── test-data/                # Test data
+├── reports/                  # Test reports
+└── pytest.ini
 ```
 
 
@@ -90,7 +97,7 @@ sdet-playwright-portfolio/
 
 ## 📦 Projects
 
-### 🔹 playwright-python-ui-framework
+### 🔹 ui-tests
 A Playwright-based UI automation framework using Python and pytest.
 
 **Highlights:**
@@ -102,7 +109,7 @@ A Playwright-based UI automation framework using Python and pytest.
 
 ---
 
-### 🔹 playwright-python-api-framework
+### 🔹 api-tests
 An API automation framework using Playwright’s request context.
 
 **Highlights:**
@@ -157,23 +164,36 @@ Documentation focused on quality leadership and strategy.
 - Example test plans
 
 ---
-
 ## 🚀 Getting Started
 
 1. Clone this repo
    ```bash
-   git clone https://github.com/Joseph-Doan/sdet-playwright-porfolio.git
-
+   git clone https://github.com/YOUR_USERNAME/playwright-enterprise-test-framework.git
+   cd playwright-enterprise-test-framework
    ```
-2. Navigate into a project folder (e.g., playwright-python-ui-framework)
+2. Create virtual environment
    ```bash
-   cd ui-tests
-
+   python -m venv .venv
+   source .venv/Scripts/activate     #Windows
    ```
-
-3. Follow that project’s README for setup & execution instructions
-
-
+3. Install dependencies
+   ```bash
+   pip install -r requirements
+   playwright install
+   ```
+4. Running Tests
+   Run all tests
+   ```bash
+   pytest -v
+   ```
+5. Run API tests only
+   ```bash
+   pytest api-tests -v
+   ```
+6. Run UI tsts only
+   ```bash
+   pytst ui-tests --headed -v
+   ```
 ---
 
 ## 🧪 Test Execution Guide
@@ -190,11 +210,6 @@ These test suites are intentionally executed separately to mirror real-world CI/
 
 ### 🚀 Run API Tests
 
-```bash
-python -m pytest api-tests/tests -v
-
-```
-
 What this covers:
 
 - Authentication
@@ -208,11 +223,6 @@ What this covers:
 - Authorization checks
 
 ### 🖥 Run UI Tests
-
-```bash
-python -m pytest ui-tests/tests -v
-
-```
 
 What this covers:
 
@@ -239,7 +249,35 @@ In production-grade automation:
 This architecture mirrors real enterprise automation strategy.
 
 ---
+## 🧠 Key Design Decisions
 
+🔹 Service Layer (API)
+
+Encapsulates API logic for better reusability and maintainability.
+
+🔹 Page Object Model (UI)
+
+Separates UI structure from test logic.
+
+🔹 Fixtures
+
+Reusable setup for:
+
+- API clients
+
+- Base URLs
+
+- Test configuration
+
+🔹 Behavior-Based Assertions
+
+🔹 Why Playwright for API Testing?
+
+Using Playwright for both API and UI testing allows a single unified toolchain, shared configuration, and consistent CI execution. This mirrors how modern SDET teams reduce tooling fragmentation in real-world environments.
+
+Tests validate actual system behavior instead of fragile UI text.
+
+---
 
 ## 🎯 How to Use This Portfolio
 
@@ -250,66 +288,19 @@ This architecture mirrors real enterprise automation strategy.
 - Interviewers: Treat this portfolio as a discussion starter for system design and quality strategy
 
 ---
+## ⭐ Why This Project Matters
 
-## 🧪 Week 3 – API Automation with Playwright (Python)
-In this week, I designed and implemented a Playwright-based API automation framework to validate an authenticated backend system. The goal was to demonstrate real-world SDET practices such as secure API testing, full CRUD coverage, negative testing, and clean test design.
+This framework demonstrates:
 
-🔹 Scope & Objectives
+-  Real-world SDET architecture
 
-Validate REST APIs behind authentication
+-  Scalable test design
 
-Cover full CRUD lifecycle for a core business resource
+-  Maintainable automation practices
 
-Ensure APIs fail safely and predictably under invalid conditions
-
-Build tests that are order-independent, reusable, and CI-ready
-
-🔹 Technology & Tools
-
-Playwright (Python) – APIRequestContext for HTTP testing
-
-Pytest – test runner and fixture management
-
-FastAPI mock enterprise app – system under test (auth + CRUD)
-
-Bearer token authentication
-
-🔹 Test Coverage
-
-✅ Authentication handling via reusable fixtures
-
-✅ Create, Read, Update, Delete (CRUD) API tests
-
-✅ Unauthorized access validation (401)
-
-✅ Input validation errors (422)
-
-✅ Non-existent resource handling (404)
-
-✅ Proper HTTP status code assertions
-
-🔹 Test Design Highlights
-
-Session-scoped fixtures for API context and authentication
-
-Function-scoped fixtures for test data creation and cleanup
-
-Centralized setup and teardown to keep tests isolated
-
-No test-order dependencies (safe for CI and parallel execution)
-
-🔹 How to Run API Tests
-
-```bash
-python -m pytest api-tests/tests -v
-
-```
+-  Strong debugging and problem-solving skills
 
 
-
-🔹 Why Playwright for API Testing?
-
-Using Playwright for both API and UI testing allows a single unified toolchain, shared configuration, and consistent CI execution. This mirrors how modern SDET teams reduce tooling fragmentation in real-world environments.
 ## 🤝 Contributing
 
 Suggestions and improvements are welcome.
