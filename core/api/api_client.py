@@ -1,10 +1,19 @@
-from playwright.sync_api import APIRequestContext
-from core.config import BASE_URL
-
 class APIClient:
 
-    def __init__(self, request: APIRequestContext):
-        self.request = request
+    def __init__(self, request_context, base_url, headers):
+        self.request = request_context
+        self.base_url = base_url
+        self.headers = headers
 
-    def get_devices(self):
-        return self.request.get(f"{BASE_URL}/devices")
+    def get(self, path):
+        return self.request.get(
+            f"{self.base_url}{path}",
+            headers=self.headers,
+        )
+
+    def post(self, path, data=None):
+        return self.request.post(
+            f"{self.base_url}{path}",
+            data=data,
+            headers=self.headers,
+        )

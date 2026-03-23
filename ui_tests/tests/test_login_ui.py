@@ -1,5 +1,5 @@
-from pages.login_page import LoginPage
-from pages.devices_page import DevicesPage
+from ui_tests.pages.login_page import LoginPage
+from ui_tests.pages.devices_page import DevicesPage
 
 def test_login_success(page, base_url):
     login_page = LoginPage(page)
