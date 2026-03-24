@@ -1,4 +1,4 @@
-from services.devices_service import DevicesService
+from api_tests.services.devices_service import DevicesService
 
 
 def test_get_devices(api_client):

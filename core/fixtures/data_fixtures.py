@@ -1,8 +1,8 @@
 import pytest
 
 @pytest.fixture(scope="session")
-def base_url():
-    return "http://127.0.0.1:8080"
+def base_url(config):
+    return config.base_url
 
 @pytest.fixture
 def test_user():

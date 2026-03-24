@@ -6,6 +6,8 @@ from core.fixtures.api_fixtures import *
 from core.fixtures.ui_fixtures import *
 from core.fixtures.data_fixtures import *
 
+from core.config.settings import Settings
+
 @pytest.fixture(scope="session")
 def auth_header(api_request_context, base_url):
     """
@@ -23,3 +25,17 @@ def auth_header(api_request_context, base_url):
     token = response.json()["access_token"]
 
     return {"Authorization": f"Bearer {token}"}
+
+@pytest.fixture(scope="session")
+def config(request):
+    env = request.config.getoption("--env")
+    return Settings(env)
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--env",
+        action="store",
+        default="dev",
+        help="Environment to run tests against"
+    )
