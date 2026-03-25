@@ -1,21 +1,44 @@
-- name: Install dependencies
-  run: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
+name: Run Tests
 
-- name: Install Playwright Browsers
-  run: |
-    playwright install --with-deps
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-- name: Start FastAPI App
-  run: |
-    nohup uvicorn main:app --host 127.0.0.1 --port 8080 &
-    sleep 5
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
-- name: Run API Tests
-  run: |
-    python -m pytest api_tests/tests -v --env=dev
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-- name: Run UI Tests
-  run: |
-    python -m pytest ui_tsts/tests -v --env=devgit
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Install Playwright Browsers
+      run: |
+        playwright install --with-deps
+
+    - name: Start FastAPI App
+      run: |
+        nohup uvicorn main:app --host 127.0.0.1 --port 8080 &
+        sleep 5
+
+    - name: Run Tests with Report
+      run: |
+        python -m pytest -v --env=dev --html=report.html --self-contained-html
+
+    - name: Upload Test Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-report
+        path: report.html
