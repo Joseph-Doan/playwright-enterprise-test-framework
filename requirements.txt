@@ -4,3 +4,4 @@ playwright
 requests
 python-dotenv
 pytest-html
+pygments
