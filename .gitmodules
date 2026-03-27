@@ -1,0 +1,3 @@
+[submodule "sut/FastAPIMockApp"]
+	path = sut/FastAPIMockApp
+	url = https://github.com/Joseph-Doan/fastapi-mock-enterprise-app.git
