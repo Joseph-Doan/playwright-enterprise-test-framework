@@ -16,14 +16,14 @@ jobs:
       with:
         submodules: true
 
-    - name: Install test framework dependencies
-      run: |
-        pip install -r requirements.txt
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
+
+    - name: Install test framework dependencies
+      run: |
+        pip install -r requirements.txt
 
     - name: Install API dependencies
       run: |
@@ -40,20 +40,27 @@ jobs:
 
     - name: Start FastAPI App
       run: |
-        echo "Starting FastAPI server..."
-        cd sut/FastAPIMockApp
-        nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
+        nohup uvicorn sut.FastAPIMockApp.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
         sleep 5
-        echo "===== SERVER LOG ====="
-        cat server.log
 
     - name: Verify API is running
       run: |
-        curl http://127.0.0.1:8080/docs
+        curl -f http://127.0.0.1:8080/docs
+
+    - name: Debug API
+      run: |
+        curl -X POST http://127.0.0.1:8080/api/login \
+          -H "Content-Type: application/json" \
+          -d '{"username":"admin", "password":"password"}'
 
     - name: Run Tests with Report
       run: |
         python -m pytest -v --env=dev --html=report.html --self-contained-html
+
+    - name: Print server logs
+      if: always()
+      run: |
+        cat server.log
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
