@@ -59,6 +59,10 @@ jobs:
       run: |
         python -m pytest -v --env=dev --html=report.html --self-contained-html
 
+    - name: Debug Routes
+      run: |
+        curl http://127.0.0.1:8080/openapi.json | grep login
+
     - name: Print server logs
       if: always()
       run: |
