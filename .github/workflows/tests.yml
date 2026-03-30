@@ -41,9 +41,16 @@ jobs:
 
     - name: Start FastAPI App
       run: |
-        cd sut/FastAPIMockApp
-        nohup uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
+        nohup uvicorn sut.FastAPIMockApp.app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
         sleep 5
+
+    - name: Wait for API (robus)
+      run: |
+        for i in {1..10}; do
+          curl http://127.0.0.1:8080/health && break
+          echo "Waiting for API..."
+          sleep 2
+        done
 
     - name: Verify API is running
       run: |
@@ -81,7 +88,7 @@ jobs:
     - name: Print server logs
       if: always()
       run: |
-        cat server.log
+        cat server.log || echo "No server.log found"
 
     - name: Upload Test Report
       uses: actions/upload-artifact@v4
