@@ -42,7 +42,7 @@ jobs:
     - name: Start FastAPI App
       run: |
         cd sut/FastAPIMockApp
-        nohup python uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
+        nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
         sleep 5
         cat server.log
 
