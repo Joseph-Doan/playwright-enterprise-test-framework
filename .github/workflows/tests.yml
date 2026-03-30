@@ -41,8 +41,10 @@ jobs:
 
     - name: Start FastAPI App
       run: |
-        nohup uvicorn sut.FastAPIMockApp.app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
+        cd sut/FastAPIMockApp
+        nohup uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
         sleep 5
+        cat server.log
 
     - name: Wait for API (robus)
       run: |
