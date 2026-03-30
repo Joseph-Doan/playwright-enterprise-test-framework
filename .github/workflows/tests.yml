@@ -55,6 +55,21 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{"username":"admin", "password":"password"}'
 
+    - name: Show FastAPI main.py
+      run: |
+        echo "========== main.py ============="
+        sed -n '1,200p' sut/FastAPIMockApp/app/main.py
+
+    - name: Show FastAPI auth.py
+      run: |
+        echo "========== auth.py ============="
+        sed -n '1,200p' sut/FastAPIMockApp/app/api/auth.py
+
+    - name: Show OpenAPI routes
+      run: |
+        curl http://127.0.0.1:8080/openapi.json
+        
+
     - name: Run Tests with Report
       run: |
         python -m pytest -v --env=dev --html=report.html --self-contained-html
