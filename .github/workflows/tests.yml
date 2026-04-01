@@ -74,6 +74,11 @@ jobs:
         echo "========== auth.py ============="
         sed -n '1,200p' sut/FastAPIMockApp/app/api/auth.py
 
+    - name: Show FastAPI devices.py
+      run: |
+        echo "========== devices.py ============="
+        sed -n '1,200p' sut/FastAPIMockApp/app/api/devices.py
+
     - name: Show OpenAPI routes
       run: |
         curl http://127.0.0.1:8080/openapi.json
