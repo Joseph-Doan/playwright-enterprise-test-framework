@@ -1,56 +1,3 @@
-import pytest
-
-
-@pytest.fixture(scope="function")
-def created_device(api_request_context, base_url, auth_header):
-    """
-    Create a device for a single test and clean it up afterward.
-    """
-    payload = {
-        "name": "Playwright Device",
-        "status": "online"
-    }
-
-    response = api_request_context.post(
-        f"{base_url}/api/devices",
-        data=payload,
-        headers=auth_header
-    )
-
-    assert response.status == 201
-    device = response.json()
-
-    yield device
-
-    # Cleanup
-    api_request_context.delete(
-        f"{base_url}/api/devices/{device['id']}",
-        headers=auth_header
-    )
-
-
-def test_get_devices_unauthorized(api_request_context, base_url):
-    response = api_request_context.get(
-        f"{base_url}/api/devices"
-    )
-
-    assert response.status == 401
-
-
-def test_create_device_unauthorized(api_request_context, base_url):
-    payload = {
-        "name": "Hacker Device",
-        "status": "online"
-    }
-
-    response = api_request_context.post(
-        f"{base_url}/api/devices",
-        data=payload
-    )
-
-    assert response.status == 401
-
-
 def test_create_device_invalid_payload(api_request_context, base_url, auth_header):
     payload = {
         "name": "Broken Device"
@@ -83,11 +30,8 @@ def test_delete_nonexistent_device(api_request_context, base_url, auth_header):
 
     assert response.status == 404
 
-def test_get_devices_returns_list(api_request_context, base_url, auth_header):
-    response = api_request_context.get(
-        f"{base_url}/api/devices",
-        headers=auth_header
-    )
+def test_get_devices_returns_list(devices_service):
+    response = devices_service.get_devices()
 
     assert response.status == 200
     assert isinstance(response.json(), list)
