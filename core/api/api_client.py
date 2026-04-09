@@ -1,35 +1,47 @@
+from __future__ import annotations
+
+from typing import Any, Optional
+
+
 class APIClient:
+    def __init__(self, request_context, auth_token: Optional[str] = None) -> None:
+        self.request_context = request_context
+        self.auth_token = auth_token
 
-    def __init__(self, request_context, base_url, headers=None):
-        self.request = request_context
-        self.base_url = base_url.rstrip("/")
-        self.headers = headers or {}
+    def _headers(self, extra_headers: Optional[dict[str, str]] = None) -> dict[str, str]:
+        headers: dict[str, str] = {}
 
-    def _url(self, path):
-        return f"{self.base_url}/{path.lstrip('/')}"
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
 
-    def get(self, path, headers=None):
-        return self.request.get(
-            self._url(path),
-            headers={**self.headers, **(headers or {})},
+        if extra_headers:
+            headers.update(extra_headers)
+
+        return headers
+
+    def get(self, path: str, params: Optional[dict[str, Any]] = None):
+        return self.request_context.get(
+            path,
+            params=params,
+            headers=self._headers(),
         )
 
-    def post(self, path, data=None, headers=None):
-        return self.request.post(
-            self._url(path),
+    def post(self, path: str, data: Optional[dict[str, Any]] = None):
+        return self.request_context.post(
+            path,
             data=data,
-            headers={**self.headers, **(headers or {})},
+            headers=self._headers(),
         )
 
-    def put(self, path, data=None, headers=None):
-        return self.request.put(
-            self._url(path),
+    def put(self, path: str, data: Optional[dict[str, Any]] = None):
+        return self.request_context.put(
+            path,
             data=data,
-            headers={**self.headers, **(headers or {})},
+            headers=self._headers(),
         )
 
-    def delete(self, path, headers=None):
-        return self.request.delete(
-            self._url(path),
-            headers={**self.headers, **(headers or {})},
+    def delete(self, path: str):
+        return self.request_context.delete(
+            path,
+            headers=self._headers(),
         )
