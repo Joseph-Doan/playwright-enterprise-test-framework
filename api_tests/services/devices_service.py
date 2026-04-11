@@ -1,22 +1,31 @@
+from __future__ import annotations
+
+from typing import Any
+
 from core.api.api_client import APIClient
 
 
 class DevicesService:
+    """
+    Service layer for device-related API operations.
+    """
 
-    def __init__(self, client: APIClient):
-        self.client = client
+    DEVICES_PATH = "/api/devices"
 
-    def get_devices(self):
-        return self.client.get("/api/devices")
+    def __init__(self, api_client: APIClient) -> None:
+        self.api_client = api_client
 
-    def get_device_by_id(self, device_id: int):
-        return self.client.get(f"/api/devices/{device_id}")
+    def get_devices(self) -> Any:
+        return self.api_client.get(self.DEVICES_PATH)
 
-    def create_device(self, payload):
-        return self.client.post("/api/devices", data=payload)
+    def create_device(self, payload: dict[str, Any]) -> Any:
+        return self.api_client.post(self.DEVICES_PATH, data=payload)
 
-    def update_device(self, device_id: int, payload):
-        return self.client.put(f"/api/devices/{device_id}", data=payload)
+    def get_device_by_id(self, device_id: int | str) -> Any:
+        return self.api_client.get(f"{self.DEVICES_PATH}/{device_id}")
 
-    def delete_device(self, device_id: int):
-        return self.client.delete(f"/api/devices/{device_id}")
+    def update_device(self, device_id: int | str, payload: dict[str, Any]) -> Any:
+        return self.api_client.put(f"{self.DEVICES_PATH}/{device_id}", data=payload)
+
+    def delete_device(self, device_id: int | str) -> Any:
+        return self.api_client.delete(f"{self.DEVICES_PATH}/{device_id}")
