@@ -10,95 +10,100 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-    - name: Checkout repo with submodules
-      uses: actions/checkout@v4
-      with:
-        submodules: true
+      - name: Checkout repo with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-    - name: Install test framework dependencies
-      run: |
-        pip install -r requirements.txt
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r sut/FastAPIMockApp/requirements.txt
 
-    - name: Install API dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r sut/FastAPIMockApp/requirements.txt
+      - name: Install Playwright browsers
+        run: |
+          playwright install --with-deps
 
-    - name: Fix missing pytest deps
-      run: |
-        pip install pygments
+      - name: Start FastAPI app
+        run: |
+          cd sut/FastAPIMockApp
+          nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
+          echo $! > uvicorn.pid
 
-    - name: Install Playwright Browsers
-      run: |
-        playwright install --with-deps
+      - name: Wait for API readiness
+        run: |
+          python - <<'PY'
+          import time
+          import urllib.request
+          import urllib.error
+          import sys
 
-    - name: Start FastAPI App
-      run: |
-        cd sut/FastAPIMockApp
-        nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8080 > server.log 2>&1 &
-        sleep 5
-        cat server.log
+          urls = [
+              "http://127.0.0.1:8080/health",
+              "http://127.0.0.1:8080/docs"
+          ]
 
-    - name: Wait for API (robus)
-      run: |
-        for i in {1..10}; do
-          curl http://127.0.0.1:8080/health && break
-          echo "Waiting for API..."
-          sleep 2
-        done
+          timeout_seconds = 60
+          interval_seconds = 2
+          deadline = time.time() + timeout_seconds
 
-    - name: Verify API is running
-      run: |
-        curl -f http://127.0.0.1:8080/docs
+          while time.time() < deadline:
+              for url in urls:
+                  try:
+                      with urllib.request.urlopen(url) as response:
+                          if response.status == 200:
+                              print(f"Service is ready via {url}")
+                              sys.exit(0)
+                  except Exception:
+                      pass
+              print("Waiting for API...")
+              time.sleep(interval_seconds)
 
-    - name: Debug API
-      run: |
-        curl -X POST http://127.0.0.1:8080/api/login \
-          -H "Content-Type: application/json" \
-          -d '{"username":"admin", "password":"password"}'
+          raise SystemExit("FastAPI service failed to become ready within timeout.")
+          PY
 
-    - name: Show FastAPI main.py
-      run: |
-        echo "========== main.py ============="
-        sed -n '1,200p' sut/FastAPIMockApp/app/main.py
+      - name: Verify API is running
+        run: |
+          curl -f http://127.0.0.1:8080/docs
 
-    - name: Show FastAPI auth.py
-      run: |
-        echo "========== auth.py ============="
-        sed -n '1,200p' sut/FastAPIMockApp/app/api/auth.py
+      - name: Create test results directory
+        run: |
+          mkdir -p test-results
 
-    - name: Show FastAPI devices.py
-      run: |
-        echo "========== devices.py ============="
-        sed -n '1,200p' sut/FastAPIMockApp/app/api/devices.py
+      - name: Run tests
+        run: |
+          python -m pytest -v --env=dev \
+            --junitxml=test-results/results.xml \
+            --html=test-results/report.html \
+            --self-contained-html
 
-    - name: Show OpenAPI routes
-      run: |
-        curl http://127.0.0.1:8080/openapi.json
-        
+      - name: Print server logs
+        if: always()
+        run: |
+          cat sut/FastAPIMockApp/server.log || echo "No server.log found"
 
-    - name: Run Tests with Report
-      run: |
-        python -m pytest -v --env=dev --html=report.html --self-contained-html
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            test-results/results.xml
+            test-results/report.html
+            sut/FastAPIMockApp/server.log
 
-    - name: Debug Routes
-      run: |
-        curl http://127.0.0.1:8080/openapi.json | grep login
-
-    - name: Print server logs
-      if: always()
-      run: |
-        cat server.log || echo "No server.log found"
-
-    - name: Upload Test Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-report
-        path: report.html
+      - name: Stop FastAPI app
+        if: always()
+        run: |
+          if [ -f sut/FastAPIMockApp/uvicorn.pid ]; then
+            kill $(cat sut/FastAPIMockApp/uvicorn.pid) || true
+          fi
