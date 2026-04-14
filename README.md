@@ -279,6 +279,29 @@ Tests validate actual system behavior instead of fragile UI text.
 
 ---
 
+## CI Test Execution
+
+This project uses GitHub Actions to execute automated tests in CI.
+
+### Pipeline flow
+1. Check out repository and submodules
+2. Set up Python 3.12
+3. Install framework and FastAPI application dependencies
+4. Start the FastAPI mock application
+5. Wait for the API to become ready
+6. Execute pytest-based automated tests
+7. Upload test results and server logs as artifacts
+
+### Generated artifacts
+- `test-results/results.xml` — JUnit XML test results
+- `test-results/report.html` — HTML pytest report
+- `sut/FastAPIMockApp/server.log` — FastAPI startup/runtime log
+
+### Why this design
+This pipeline is structured to provide repeatable automated test execution, useful debugging artifacts, and a cleaner CI flow aligned with enterprise quality engineering practices.
+
+---
+
 ## 🎯 How to Use This Portfolio
 
 - Hiring managers: Review the README files inside each project to understand architecture and reasoning
