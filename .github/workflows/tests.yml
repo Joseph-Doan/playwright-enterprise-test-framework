@@ -44,7 +44,6 @@ jobs:
           python - <<'PY'
           import time
           import urllib.request
-          import urllib.error
           import sys
 
           urls = [
@@ -75,10 +74,6 @@ jobs:
         run: |
           curl -f http://127.0.0.1:8080/docs
 
-      - name: Create test results directory
-        run: |
-          mkdir -p test-results
-
       - name: Run tests
         run: |
           mkdir -p test-results
@@ -88,12 +83,12 @@ jobs:
             --self-contained-html
 
       - name: Print server logs
-        if: always()
+        if: ${{ always() }}
         run: |
           cat sut/FastAPIMockApp/server.log || echo "No server.log found"
 
       - name: Upload test artifacts
-        if: always()
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: test-artifacts
@@ -103,7 +98,7 @@ jobs:
             sut/FastAPIMockApp/server.log
 
       - name: Stop FastAPI app
-        if: always()
+        if: ${{ always() }}
         run: |
           if [ -f sut/FastAPIMockApp/uvicorn.pid ]; then
             kill $(cat sut/FastAPIMockApp/uvicorn.pid) || true
