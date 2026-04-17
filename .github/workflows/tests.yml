@@ -81,6 +81,7 @@ jobs:
 
       - name: Run tests
         run: |
+          mkdir -p test-results
           python -m pytest -v --env=dev \
             --junitxml=test-results/results.xml \
             --html=test-results/report.html \
