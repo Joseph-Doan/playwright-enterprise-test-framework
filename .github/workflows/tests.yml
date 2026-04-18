@@ -78,7 +78,7 @@ jobs:
         run: |
           mkdir -p test-results
           python -m pytest -v --env=dev \
-            --junitxml=test-results/results.xml \
+            --junitxml=test-results/junit-results.xml \
             --html=test-results/report.html \
             --self-contained-html
 
@@ -93,7 +93,7 @@ jobs:
         with:
           name: test-artifacts
           path: |
-            test-results/results.xml
+            test-results/junit-results.xml
             test-results/report.html
             sut/FastAPIMockApp/server.log
           if-no-files-found: 'warn'
