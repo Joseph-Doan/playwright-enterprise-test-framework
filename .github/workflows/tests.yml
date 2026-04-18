@@ -96,6 +96,8 @@ jobs:
             test-results/results.xml
             test-results/report.html
             sut/FastAPIMockApp/server.log
+          if-no-files-found: 'warn'
+          retention-days: 14
 
       - name: Stop FastAPI app
         if: ${{ always() }}
