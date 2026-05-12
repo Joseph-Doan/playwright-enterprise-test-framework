@@ -1,6 +1,8 @@
 from __future__ import annotations
+import pytest
 
-
+@pytest.mark.smoke
+@pytest.mark.api
 def test_health_endpoint_returns_200_and_valid_payload(health_service):
     """
     Validate that the health endpoint is reachable and returns
