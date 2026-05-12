@@ -1,4 +1,5 @@
 from __future__ import annotations
+import pytest
 
 
 def test_get_devices(devices_service):
@@ -20,6 +21,8 @@ def test_get_devices(devices_service):
     )
 
 
+@pytest.mark.regression
+@pytest.mark.api
 def test_create_device(devices_service):
     payload = {
         "name": "Test Device",
