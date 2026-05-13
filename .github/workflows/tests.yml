@@ -86,6 +86,17 @@ jobs:
             --html=test-results/report.html \
             --self-contained-html
 
+      # Future regression execution
+      # - name: Run regression tests
+      #   run: |
+      #     python -m pytest -v -m regression --env=dev
+
+      # Regression suite intentionally deferred.
+      # Future enhancement:
+      # - nightly execution
+      # - scheduled workflow
+      # - full validation suite
+
       - name: Print server logs
         if: ${{ always() }}
         run: |
