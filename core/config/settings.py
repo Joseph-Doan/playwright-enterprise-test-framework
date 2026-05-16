@@ -1,10 +1,16 @@
-import os
-from core.config.environments import ENVIRONMENTS
+import yaml
+from pathlib import Path
+
+
+CONFIG_FILE = Path("config/environments.yaml")
+
 
 class Settings:
-    def __init__(self, env: str):
-        if env not in ENVIRONMENTS:
-            raise ValueError(f"Unknown environment {env}")
+    def __init__(self, env="local"):
+        with open(CONFIG_FILE, "r") as file:
+            data = yaml.safe_load(file)
 
-        self.env = env
-        self.base_url = ENVIRONMENTS[env]["base_url"]
+        if env not in data:
+            raise ValueError(f"Unknown environment: {env}")
+
+        self.base_url = data[env]["base_url"]
