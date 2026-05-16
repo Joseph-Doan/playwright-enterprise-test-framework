@@ -1,0 +1,11 @@
+dev:
+  base_url: http://127.0.0.1:8080
+
+local:
+  base_url: http://127.0.0.1:8080
+
+ci:
+  base_url: http://127.0.0.1:8080
+
+staging:
+  base_url: https://staging.api.formcircles.com
