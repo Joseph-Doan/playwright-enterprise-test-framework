@@ -9,7 +9,10 @@ from core.api.api_client import APIClient
 
 
 @pytest.fixture(scope="session")
-def api_request_context(playwright: Playwright) -> APIRequestContext:
+def api_request_context(
+        playwright: Playwright,
+        base_url: str,
+) -> APIRequestContext:
     """
     Shared Playwright API request context for the test session.
 
@@ -17,7 +20,7 @@ def api_request_context(playwright: Playwright) -> APIRequestContext:
     like '/api/login' and '/health'.
     """
     context = playwright.request.new_context(
-        base_url="http://127.0.0.1:8080",
+        base_url=base_url,
         extra_http_headers={
             "Accept": "application/json",
         },
