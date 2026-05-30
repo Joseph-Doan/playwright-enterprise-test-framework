@@ -2,7 +2,10 @@ name: Build Test Publish Container
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - feature/FCINFRA-31-published-tested-container-image-to-registry
+
   pull_request:
     branches: [ main ]
   workflow_dispatch:
