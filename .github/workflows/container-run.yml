@@ -54,3 +54,29 @@ jobs:
           echo "FastAPI container failed health check"
           docker logs fc-fastapi-sut
           exit 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps
+
+      - name: Execute smoke tests against running container
+        run: |
+          pytest -m smoke \
+            --base-url=http://127.0.0.1:8080 \
+            --junitxml=test-results/smoke-junit-results.xml \
+            --html=test-results/smoke-report.html \
+            --self-contained-html
+
+      - name: Upload smoke test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: test-results/
