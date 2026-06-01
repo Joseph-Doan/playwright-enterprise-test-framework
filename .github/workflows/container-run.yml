@@ -77,6 +77,13 @@ jobs:
             --html=test-results/smoke-report.html \
             --self-contained-html
 
+      - name: Capture container logs on test failure
+        if: failure()
+        run: |
+          echo "Smoke test failure detected. Capturing FastAPI container logs..."
+          docker ps -a
+          docker logs fc-fastapi-sut || true
+
       - name: Upload smoke test artifacts
         if: always()
         uses: actions/upload-artifact@v4
