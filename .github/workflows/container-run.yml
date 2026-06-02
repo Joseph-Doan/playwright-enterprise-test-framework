@@ -90,3 +90,11 @@ jobs:
         with:
           name: smoke-test-results
           path: test-results/
+
+      - name: Stop and clean up FastAPI container
+        if: always()
+        run: |
+          echo "Cleaning up FastAPI container..."
+          docker stop fc-fastapi-sut || true
+          docker rm fc-fastapi-sut || true
+          docker ps -a
