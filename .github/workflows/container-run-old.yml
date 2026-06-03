@@ -38,19 +38,19 @@ jobs:
       - name: Start FastAPI container
         run: |
           docker run -d \
-            --name $CONTAINER_NAME \
-            -p $HOST_PORT:$CONTAINER_PORT \
+            --name fc-fastapi-sut \
+            -p 8080:8080 \
             $IMAGE_NAME
 
       - name: Verify container is running
         run: |
           docker ps
-          docker logs $CONTAINER_NAME
+          docker logs fc-fastapi-sut
 
       - name: Wait for FastAPI health endpoint
         run: |
           for i in {1..30}; do
-            if curl -f $BASE_URL/health; then
+            if curl -f http://127.0.0.1:8080/health; then
               echo "FastAPI container is healthy"
               exit 0
             fi
@@ -59,7 +59,7 @@ jobs:
           done
 
           echo "FastAPI container failed health check"
-          docker logs $CONTAINER_NAME
+          docker logs fc-fastapi-sut
           exit 1
 
       - name: Set up Python
@@ -76,7 +76,7 @@ jobs:
       - name: Execute smoke tests against running container
         run: |
           pytest -m smoke \
-            --base-url=$BASE_URL \
+            --base-url=http://127.0.0.1:8080 \
             --junitxml=test-results/smoke-junit-results.xml \
             --html=test-results/smoke-report.html \
             --self-contained-html
@@ -86,7 +86,7 @@ jobs:
         run: |
           echo "Smoke test failure detected. Capturing FastAPI container logs..."
           docker ps -a
-          docker logs $CONTAINER_NAME || true
+          docker logs fc-fastapi-sut || true
 
       - name: Upload smoke test artifacts
         if: always()
@@ -99,6 +99,6 @@ jobs:
         if: always()
         run: |
           echo "Cleaning up FastAPI container..."
-          docker stop $CONTAINER_NAME || true
-          docker rm $CONTAINER_NAME || true
+          docker stop fc-fastapi-sut || true
+          docker rm fc-fastapi-sut || true
           docker ps -a
