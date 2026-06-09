@@ -321,6 +321,85 @@ The container includes a Docker HEALTHCHECK that continuously validates the Fast
 
 ---
 
+## Run API Regression Tests with Docker Compose
+
+The local Docker Compose environment can execute API automation tests against the FastAPI application using the containerized Playwright test runner.
+
+### Execute API Test Suite
+
+```bash
+docker compose run --rm \
+  -e TEST_SUITE=api \
+  test-runner
+```
+
+### Execution Flow
+
+```text
+Docker Compose
+        ↓
+Start FastAPI Service
+        ↓
+Wait for Health Check
+        ↓
+Start Test Runner Service
+        ↓
+Execute API Tests
+        ↓
+Generate Reports
+```
+
+### Service Communication
+
+The test runner communicates with the FastAPI service using Docker Compose service discovery:
+
+```text
+http://fastapi:8080
+```
+
+This eliminates the need for localhost-based configuration and mirrors containerized CI execution.
+
+### Generated Reports
+
+Reports are written to the local reports directory:
+
+```text
+reports/
+├── smoke-junit-results.xml
+└── smoke-report.html
+```
+
+### View Results
+
+```bash
+ls reports
+```
+
+Open the HTML report:
+
+```text
+reports/smoke-report.html
+```
+
+### Cleanup
+
+Stop all services:
+
+```bash
+docker compose down
+```
+
+### Benefits
+
+* Local execution closely mirrors CI workflows
+* Automated service startup and health validation
+* Consistent containerized execution environment
+* Persistent test reports
+* Simplified local regression testing
+
+---
+
+
 ## 🎯 How to Use This Portfolio
 
 - Hiring managers: review project documentation
