@@ -26,6 +26,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Notify Pumble - CI started
+        continue-on-error: true
+        run: |
+          curl -X POST "${{ secrets.PUMBLE_CI_WEBHOOK_URL }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"text\":\"🚀 CI started | Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Workflow: ${{ github.workflow }} | Commit: ${{ github.sha }}\"}"
+
       - name: Set image tags
         run: |
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
