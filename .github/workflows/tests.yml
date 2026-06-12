@@ -128,6 +128,9 @@ jobs:
             kill $(cat sut/FastAPIMockApp/uvicorn.pid) || true
           fi
 
+      - name: FCINFRA-260 intentional failure
+        run: exit 1
+
       - name: Notify Pumble - CI finished
         if: always()
         continue-on-error: true
