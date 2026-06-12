@@ -18,6 +18,13 @@ jobs:
         with:
           submodules: true
 
+      - name: Notify Pumble - CI started
+        continue-on-error: true
+        run: |
+          curl -X POST "${{ secrets.PUMBLE_CI_WEBHOOK_URL }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"text\":\"🚀 CI started | Repo: ${{ github.repository }} | Branch: ${{ github.ref_name }} | Workflow: ${{ github.workflow }} | Commit: ${{ github.sha }}\"}"
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
